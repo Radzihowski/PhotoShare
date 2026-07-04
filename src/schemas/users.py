@@ -4,6 +4,7 @@ from datetime import date, timedelta, datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
+from src .database.enums import Role
 
 class UserModel(BaseModel): # pydentic class
     email: str
@@ -15,6 +16,7 @@ class UserDb(BaseModel):
     id: int
     email: str
     created_at: datetime
+    role: Role = Role.USER
 
     class Config:
         orm_mode = True

@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, func, Table, Text
+from sqlalchemy import Column, Integer, String, Boolean, func, Table, Text, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime, Date
 from sqlalchemy.ext.declarative import declarative_base
+from src.database.enums import Role
 
 Base = declarative_base()
 
@@ -28,5 +29,6 @@ class User(Base):
     created_at = Column('created_at', DateTime, default=func.now())
     confirmed = Column(Boolean, default=False)
     avatar = Column(String(255), nullable=True)
+    role = Column(Enum(Role), nullable=True)
 
 
