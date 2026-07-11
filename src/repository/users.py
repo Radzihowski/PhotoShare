@@ -1,10 +1,33 @@
 # Створюємо репозиторій користувача
 from sqlalchemy import select, update
-from sqlalchemy.orm import Session
 
 from src.database.db import sessionmanager
 from src.database.models import User
+from src.database.enums import Role
 from src.schemas.users import UserModel
+
+
+async def get_user_by_role(role: Role) -> User | None:
+    """Return the first user that has the given role, or None if there is none."""
+    async with sessionmanager.session() as session:
+        query = select(User).where(User.role == role)
+        result = await session.execute(query)
+        return result.scalars().first()
+
+
+async def create_admin(email: str, hashed_password: str) -> User:
+    """Create a confirmed user with the ADMIN role and return it."""
+    async with sessionmanager.session() as session:
+        async with session.begin():
+            admin = User(
+                email=email,
+                password=hashed_password,
+                role=Role.ADMIN,
+                confirmed=True,
+            )
+            session.add(admin)
+        await session.refresh(admin)
+        return admin
 
 
 async def get_user_by_email(email: str) -> User:

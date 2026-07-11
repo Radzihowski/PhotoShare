@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     cloudinary_name: str
     cloudinary_api_key: str
     cloudinary_api_secret: str
+    admin_email: str
+    admin_password: str
 
     class Config:
         env_file = ".env"

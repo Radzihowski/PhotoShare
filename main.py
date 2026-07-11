@@ -9,6 +9,10 @@ from src.routes import auth
 from src.routes import contacts
 from src.routes import users
 
+from src.database.enums import Role
+from src.repository import users as repository_users
+from src.services.auth import auth_service
+
 app = FastAPI()
 
 origins = [
@@ -32,6 +36,12 @@ async def startup():
     r = await redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0, encoding="utf-8",
                           decode_responses=True)
     await FastAPILimiter.init(r)
+
+    # Ensure an admin account exists; create one from .env credentials if not.
+    admin = await repository_users.get_user_by_role(Role.ADMIN)
+    if admin is None:
+        hashed_password = auth_service.get_password_hash(settings.admin_password)
+        await repository_users.create_admin(settings.admin_email, hashed_password)
 
 @app.get("/")
 def read_root():

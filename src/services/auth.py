@@ -100,6 +100,7 @@ class Auth:
         else:
             logger.info("found in cache")
             user = pickle.loads(user)
+        print(user.id, user.email, user.role, sep=" ")
         return user
 
     def create_email_token(self, data: dict):
