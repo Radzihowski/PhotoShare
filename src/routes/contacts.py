@@ -1,11 +1,14 @@
 from typing import List
 from src.utils.py_logger import get_logger
+from src.database.enums import Role
+from src.services.rbac import RoleAccess
 
-from fastapi import APIRouter, status, Query, Security, Depends
+from fastapi import APIRouter, status, Query, Security, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_limiter.depends import RateLimiter
 from src.repository import users as repository_users
 from src.services.auth import auth_service
+from src.database.models import User
 
 from src.schemas.contacts import ContactInfo, ContactUpdateRequest
 # from sqlalchemy.orm import Session
@@ -85,9 +88,7 @@ async def update_contact(contact_id: int, body: ContactUpdateRequest, credential
 
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT,
                dependencies=[Depends(RateLimiter(times=5, seconds=60))])
-async def delete_contact(contact_id: int, credentials: HTTPAuthorizationCredentials = Security(security)):
-    token = credentials.credentials
-    user = await auth_service.get_current_user(token)
+async def delete_contact(contact_id: int, user: User = Depends(RoleAccess(Role.ADMIN))):
     service = ContactService()
     await service.delete_contact(contact_id, user_id=user.id)
 
