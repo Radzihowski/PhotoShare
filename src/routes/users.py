@@ -31,8 +31,8 @@ async def update_avatar_user(file: UploadFile = File(), credentials: HTTPAuthori
     token = credentials.credentials
     current_user = await auth_service.get_current_user(token)
     print(file.filename)
-    r = cloudinary.uploader.upload(file.file, public_id=f'ContactApp/{current_user.email}/{file.filename}', overwrite=True)
-    src_url = cloudinary.CloudinaryImage(f'ContactApp/{current_user.email}')\
+    r = cloudinary.uploader.upload(file.file, public_id=f'PhotoShare/{current_user.email}/{file.filename}', overwrite=True)
+    src_url = cloudinary.CloudinaryImage(f'PhotoShare/{current_user.email}')\
                         .build_url(width=250, height=250, crop='fill', version=r.get('version'))
     await repository_users.update_avatar(current_user.email, src_url)
     return {"url": src_url, "detail": "Avatar successfully updated"}

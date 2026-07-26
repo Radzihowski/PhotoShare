@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.routes import auth
 from src.routes import contacts
 from src.routes import users
+from src.routes import posts
 
 from src.database.enums import Role
 from src.repository import users as repository_users
@@ -30,6 +31,7 @@ app.add_middleware(
 app.include_router(contacts.router, prefix='/api')
 app.include_router(auth.router, prefix='/api')
 app.include_router(users.router, prefix='/api')
+app.include_router(posts.router, prefix='/api') # Підключили до нашого застосунку
 
 @app.on_event("startup")
 async def startup():

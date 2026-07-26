@@ -33,3 +33,10 @@ ID Post_ID Tag_ID
 
 Results:
 Tables created tomorrow continue to write routes
+
+
+26.07
+Results: created route for post posts
+
+Next time: -save payload to DB
+-fix cloudinary upload process
