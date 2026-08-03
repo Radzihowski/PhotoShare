@@ -40,3 +40,7 @@ Results: created route for post posts
 
 Next time: -save payload to DB
 -fix cloudinary upload process
+
+2.08
+Result: Created repository posts and saved to DB
+Next time: solve problem with cloudinary 
