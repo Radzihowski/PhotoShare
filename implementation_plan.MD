@@ -44,3 +44,7 @@ Next time: -save payload to DB
 2.08
 Result: Created repository posts and saved to DB
 Next time: solve problem with cloudinary 
+
+13.09
+Result: fixed  issues with images on cloudinary 
+Next steps: update technical requirements

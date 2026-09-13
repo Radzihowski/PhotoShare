@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from src.utils.py_logger import get_logger
 import cloudinary
 import cloudinary.uploader
@@ -30,10 +32,9 @@ async def create_post(description: str | None = Form(None, max_length=2056), fil
         api_secret=settings.cloudinary_api_secret,
         secure=True
     )
-    print(file.filename)
-    r = cloudinary.uploader.upload(file.file, public_id=f'PhotoShare/{current_user.email}/{file.filename}', overwrite=True)
-    src_url = cloudinary.CloudinaryImage(f'PhotoShare/{current_user.email}')\
-                        .build_url(version=r.get('version'))
+    public_id = f'PhotoShare/{current_user.id}/{uuid4().hex}'
+    r = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=True)
+    src_url = r['secure_url']
     payload:dict = {"description": description, "image_url": src_url, "user_id": current_user.id}
     print(payload)
     print(type(payload))
