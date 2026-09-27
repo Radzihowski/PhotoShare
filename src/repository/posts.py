@@ -1,5 +1,5 @@
 # Створюємо репозиторій користувача
-from sqlalchemy import select, update
+from sqlalchemy import select, exists, delete
 
 from src.database.db import sessionmanager
 from src.database.models import User, Post, PostTag, Tag
@@ -18,5 +18,21 @@ async def create_post(body: dict) -> int|None:
         print(f"Post {body.get('image_url')} added successfully!")
         return post_id
 
-
-
+async  def delete_post(post_id:int, user_id:int) -> int:
+    async with sessionmanager.session() as session:
+        async with session.begin():
+            query = select(exists().where(Post.id == post_id, Post.user_id == user_id, Post.is_deleted == False))
+            print(query)
+            result = await session.execute(query)
+            print(result)
+            is_exist =  result.scalar()
+            print(is_exist)
+            if is_exist == True:
+                query = delete(Post).where(Post.id == post_id, Post.user_id == user_id, Post.is_deleted == False)
+                print(query)
+                result = await session.execute(query)
+                print(result)
+                await session.commit()
+                return result.rowcount
+            else:
+                return 0

@@ -25,7 +25,7 @@ class ContactCRUD:
     @staticmethod
     async def read_contact(contact_id:int, user_id:int):
         async  with sessionmanager.session() as session:
-            query = select(Contact).where(Contact.id == contact_id, Contact.user_id==user_id)
+            query = select(Contact).where(Contact.id == contact_id, Contact.user_id == user_id)
             print(query)
             result = await session.execute(query)
             print(result)

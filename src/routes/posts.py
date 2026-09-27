@@ -40,3 +40,10 @@ async def create_post(description: str | None = Form(None, max_length=2056), fil
     print(type(payload))
     post_id = await repository_posts.create_post(body=payload)
     return PostResponce(id=post_id)
+
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT,
+               dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def delete_post(post_id: int, user: User = Depends(RoleAccess(Role.USER))):
+    row_count = await repository_posts.delete_post(post_id, user.id)
+    if row_count == 0:
+        raise HTTPException(status_code=404, detail="Post doesn't exists with such ID")

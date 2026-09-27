@@ -48,3 +48,7 @@ Next time: solve problem with cloudinary
 13.09
 Result: fixed  issues with images on cloudinary 
 Next steps: update technical requirements
+
+27.09
+Result: Implemented Delete Post IT
+Next step: fix bug with delete implement update operation on colum is_delete
