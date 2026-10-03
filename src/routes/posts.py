@@ -47,3 +47,13 @@ async def delete_post(post_id: int, user: User = Depends(RoleAccess(Role.USER)))
     row_count = await repository_posts.delete_post(post_id, user.id)
     if row_count == 0:
         raise HTTPException(status_code=404, detail="Post doesn't exists with such ID")
+
+@router.patch("/{post_id}", status_code=status.HTTP_200_OK,
+               dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def update_post(post_id: int, description: str | None = Form(None, max_length=2056), user: User = Depends(RoleAccess(Role.USER))):
+    payload: dict = {'post_id': post_id, "description": description, "user_id": user.id}
+    status = await repository_posts.update_post(payload)
+    print(status)
+    if status == 404:
+        raise HTTPException(status_code=404, detail="Post doesn't exists with such ID")
+    return {"status":status}
