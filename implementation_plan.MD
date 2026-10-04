@@ -52,3 +52,12 @@ Next steps: update technical requirements
 27.09
 Result: Implemented Delete Post IT
 Next step: fix bug with delete implement update operation on colum is_delete
+
+03.10
+Result: Fixed bug where delete method delete data from DB
+Implemented update method 
+Next step: implement method where users can get picture by ID
+
+04.10
+Result: implemented method where users can get post by ID and list of all posts by the user in descending order
+Next steps: Implement up to 5 tags under posts

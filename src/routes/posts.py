@@ -1,24 +1,18 @@
 from uuid import uuid4
 
-from src.utils.py_logger import get_logger
 import cloudinary
 import cloudinary.uploader
+from fastapi import APIRouter, status, UploadFile, File, Form, Depends, HTTPException
+from fastapi.security import HTTPBearer
+from fastapi_limiter.depends import RateLimiter
+
 from src.conf.config import settings
 from src.database.enums import Role
-from src.services.rbac import RoleAccess
-
-from fastapi import APIRouter, status, Query, UploadFile, File, Form, Depends, HTTPException
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi_limiter.depends import RateLimiter
-from src.repository import users as repository_users
-from src.services.auth import auth_service
 from src.database.models import User
-from src.conf.config import settings
 from src.repository import posts as repository_posts
-
-from src.schemas.posts import PostsRequest, PostResponce
-from src.schemas.contacts import ContactRequest, ContactResponse
-from src.services.contacts import ContactService
+from src.schemas.posts import PostResponce
+from src.services.rbac import RoleAccess
+from src.utils.py_logger import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter(prefix='/posts', tags=["posts"])
@@ -57,3 +51,22 @@ async def update_post(post_id: int, description: str | None = Form(None, max_len
     if status == 404:
         raise HTTPException(status_code=404, detail="Post doesn't exists with such ID")
     return {"status":status}
+
+@router.get("/list", status_code=status.HTTP_200_OK,
+            dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def get_posts(user: User = Depends(RoleAccess(Role.USER))):
+    records = await repository_posts.get_posts(user.id)
+    print(records)
+    return records
+
+
+@router.get("/{post_id}", status_code=status.HTTP_200_OK,
+            dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def get_post(post_id: int, user: User = Depends(RoleAccess(Role.USER))):
+    record = await repository_posts.get_post(post_id, user.id)
+    print(record)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Post doesn't exists with such ID")
+    return {"post_id": record["id"], "image_url": record["image_url"], "description": record["description"],
+            "created_at": record["created_at"], "tags": record["tags"]}
+
