@@ -61,3 +61,5 @@ Next step: implement method where users can get picture by ID
 04.10
 Result: implemented method where users can get post by ID and list of all posts by the user in descending order
 Next steps: Implement up to 5 tags under posts
+
+10.10 
